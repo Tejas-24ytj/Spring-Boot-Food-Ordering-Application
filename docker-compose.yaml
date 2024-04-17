@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: "mysql:8.0"
+    container_name: "mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: Tejas@24l
+      MYSQL_DATABASE: zosh_food
+    ports:
+      - "3308:3306"   # Change the port mapping to 3308:3308
+    volumes:
+      -  C:/Users/tejas/OneDrive/Desktop/db_volume:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
+    networks:
+      - zosh_network
+    
+  spring-boot-app:
+    restart: always
+    build:
+      context: ./backend-spring-boot 
+      dockerfile: Dockerfile
+    ports:
+      - "5454:5454"
+    environment:
+      SERVER_PORT: 5454
+      DB_HOST: mysql
+      DB_PORT: 3306   # Change the DB port to 3308
+      DB_NAME: zosh_food
+      DB_USER: root
+      DB_PASSWORD: Tejas@24l
+      STRIPE_API_KEY: "your stripe test key"
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: tblamkhade24@gmail.com
+      SPRING_MAIL_PASSWORD: Tejas@24l
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
+    depends_on: 
+       - mysql
+    networks:
+      - zosh_network
+
+  react-app:
+    build:
+      context: ./frontend-react
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on: 
+      - spring-boot-app
+    networks:
+      - zosh_network
+
+networks:
+  zosh_network:
+    driver: bridge
