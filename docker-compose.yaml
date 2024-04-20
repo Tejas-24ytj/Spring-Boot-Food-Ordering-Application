@@ -18,7 +18,7 @@ services:
   spring-boot-app:
     restart: always
     build:
-      context: "/var/lib/jenkins/workspace/React Spring Boot 1/backend-spring-boot"
+      context: "./backend-spring boot"
       dockerfile: Dockerfile
     ports:
       - "5454:5454"
